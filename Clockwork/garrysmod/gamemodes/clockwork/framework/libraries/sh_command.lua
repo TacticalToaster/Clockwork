@@ -16,8 +16,8 @@ local table = table;
 local hook = hook;
 
 Clockwork.command = Clockwork.kernel:NewLibrary("Command");
-Clockwork.command.stored = {};
-Clockwork.command.hidden = {};
+Clockwork.command.stored = Clockwork.command.stored or {};
+Clockwork.command.hidden = Clockwork.command.hidden or {};
 
 CMD_KNOCKEDOUT = 2;
 CMD_FALLENOVER = 4;
@@ -157,6 +157,8 @@ if (SERVER) then
 									end;
 									
 									if (bSuccess) then
+										Clockwork.plugin:Call("PlayerUsedCommand", player, commandTable, arguments);
+										
 										if (table.concat(arguments, " ") != "") then
 											Clockwork.kernel:PrintLog(LOGTYPE_GENERIC, player:Name().." has used '"..commandPrefix..commandTable.name.." "..table.concat(arguments, " ").."'.");
 										else

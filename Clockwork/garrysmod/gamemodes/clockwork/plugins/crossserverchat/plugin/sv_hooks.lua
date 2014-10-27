@@ -26,7 +26,7 @@ function cwXCS:PlayerCanSayOOC(player, text)
 	local curTime = CurTime();
 	local playerName = player:Name();
 	local serverName = Clockwork.config:Get("cross_server_chat_name"):Get();
-	local teamColor = Clockwork.json:Encode(cwTeam.GetColor(player:Team()));
+	local teamColor = Clockwork.json:Encode(_team.GetColor(player:Team()));
 
 	if (Clockwork.config:Get("cross_server_chat_enabled"):Get()
 	and playerName != "" and serverName != "" and text != "") then

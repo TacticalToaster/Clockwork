@@ -17,10 +17,10 @@ local util = util;
 local os = os;
 
 Clockwork.item = Clockwork.kernel:NewLibrary("Item");
-Clockwork.item.stored = {};
-Clockwork.item.buffer = {};
-Clockwork.item.weapons = {};
-Clockwork.item.instances = {};
+Clockwork.item.stored = Clockwork.item.stored or {};
+Clockwork.item.buffer = Clockwork.item.buffer or {};
+Clockwork.item.weapons = Clockwork.item.weapons or {};
+Clockwork.item.instances = Clockwork.item.instances or {};
 
 --[[
 	Begin defining the item class base for other item's to inherit from.
@@ -466,7 +466,7 @@ function Clockwork.item:Initialize()
 end;
 
 if (SERVER) then
-	Clockwork.item.entities = {};
+	Clockwork.item.entities = Clockwork.item.entities or {};
 	
 	-- A function to use an item for a player.
 	function Clockwork.item:Use(player, itemTable, bNoSound)
@@ -647,7 +647,7 @@ if (SERVER) then
 	end;	
 else
 	function Clockwork.item:GetIconInfo(itemTable)
-		local model = itemTable("iconModel", itemTable("model"));
+		local model = itemTable("iconModel", itemTable("model")) or "models/error.mdl";
 		local skin = itemTable("iconSkin", itemTable("skin"));
 		
 		if (itemTable.GetClientSideModel) then
@@ -658,7 +658,7 @@ else
 			skin = itemTable:GetClientSideSkin();
 		end;
 		
-		if (not model) then
+		if (!model) then
 			model = "models/props_c17/oildrum001.mdl";
 		end;
 		
@@ -675,6 +675,7 @@ else
 		local name = itemTable("name");
 		
 		local weightText = itemTable("weightText");
+
 		if (weightText) then
 			weight = weightText;
 		elseif (itemTable("weight") == 0) then
@@ -682,6 +683,7 @@ else
 		end;
 		
 		local spaceText = itemTable("spaceText");
+
 		if (spaceText) then
 			space = spaceText;
 		elseif (itemTable("space") == 0) then

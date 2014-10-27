@@ -23,10 +23,11 @@ local util = util;
 if (Clockwork.plugin) then return; end;
 
 Clockwork.plugin = Clockwork.kernel:NewLibrary("Plugin");
-Clockwork.plugin.stored = {};
-Clockwork.plugin.buffer = {};
-Clockwork.plugin.modules = {};
-Clockwork.plugin.unloaded = {};
+Clockwork.plugin.stored = Clockwork.plugin.stored or {};
+Clockwork.plugin.buffer = Clockwork.plugin.buffer or {};
+Clockwork.plugin.modules = Clockwork.plugin.modules or {};
+Clockwork.plugin.unloaded = Clockwork.plugin.unloaded or {};
+Clockwork.plugin.hookTable = Clockwork.plugin.hookTable or {};
 
 PLUGIN_META = {__index = PLUGIN_META};
 PLUGIN_META.description = "An undescribed plugin or schema.";
@@ -135,7 +136,7 @@ if (SERVER) then
 		return false;
 	end;
 else
-	Clockwork.plugin.override = {};
+	Clockwork.plugin.override = Clockwork.plugin.override or {};
 	
 	-- A function to set whether a plugin is unloaded.
 	function Clockwork.plugin:SetUnloaded(name, isUnloaded)
@@ -201,6 +202,24 @@ else
 		
 		return false;
 	end;
+	
+	Clockwork.datastream:Hook("PluginGetUnloaded", function(data)	
+		for k, v in pairs(Clockwork.plugin.stored) do
+			if (data[v.folderName]) then
+				Clockwork.plugin:SetUnloaded(v.name, true);
+			else
+				Clockwork.plugin:SetUnloaded(v.name, false);
+			end;
+		end;
+	end);
+	
+	Clockwork.datastream:Hook("PluginSetUnloaded", function(data)
+		local plugin = Clockwork.plugin:FindByID(data[1]);
+		
+		if (plugin) then
+			Clockwork.plugin:SetUnloaded(plugin.name, (data[2] == true));
+		end;
+	end);
 end;
 
 -- A function to set if the plugin system is initialized.

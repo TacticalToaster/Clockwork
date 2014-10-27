@@ -19,8 +19,7 @@ function Clockwork.dermaRequest:GenerateID()
 end;
 
 if (SERVER) then
-
-	Clockwork.dermaRequest.hooks = {};
+	Clockwork.dermaRequest.hooks = Clockwork.dermaRequest.hooks or {};
 
 	--[[
 		@codebase Server
@@ -33,7 +32,10 @@ if (SERVER) then
 	--]]
 	function Clockwork.dermaRequest:RequestString(player, title, question, default, Callback)
 		local rID = self:GenerateID();
-		Clockwork.datastream:Start(player, "dermaRequest_stringQuery", {id = rID, title = title, question = question, default = default});
+		Clockwork.datastream:Start(player, "dermaRequest_stringQuery", {
+			id = rID, title = title, question = question, default = default
+		});
+
 		self.hooks[rID] = {Callback = Callback, player = player};
 	end;
 
@@ -47,7 +49,10 @@ if (SERVER) then
 	--]]
 	function Clockwork.dermaRequest:RequestConfirmation(player, title, question, Callback)
 		local rID = self:GenerateID();
-		Clockwork.datastream:Start(player, "dermaRequest_confirmQuery", {id = rID, title = title, question = question});
+		Clockwork.datastream:Start(player, "dermaRequest_confirmQuery", {
+			id = rID, title = title, question = question
+		});
+
 		self.hooks[rID] = {Callback = Callback, player = player};
 	end;
 
@@ -60,7 +65,9 @@ if (SERVER) then
 		@param String An optional button text override (Optional).
 	--]]
 	function Clockwork.dermaRequest:Message(player, message, title, button)
-		Clockwork.datastream:Start(player, "dermaRequest_message", {message = message, title = title or nil, button = button or nil});
+		Clockwork.datastream:Start(player, "dermaRequest_message", {
+			message = message, title = title or nil, button = button or nil
+		});
 	end;
 
 	-- An internal function to validate a return
@@ -68,6 +75,7 @@ if (SERVER) then
 		if (data.id and data.recv and self.hooks[data.id] and self.hooks[data.id].player == player) then
 			return true;
 		end;
+		
 		return false;
 	end;
 
@@ -100,5 +108,4 @@ else
 		local button = data.button or nil;
 		Derma_Message(data.message, data.title, data.button);
 	end);
-
-end
+end;

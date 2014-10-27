@@ -18,4 +18,4 @@ Clockwork.kernel:IncludePrefixed("sv_plugin.lua");
 Clockwork.kernel:IncludePrefixed("sv_hooks.lua");
 Clockwork.kernel:IncludePrefixed("cl_hooks.lua");
 
-cwAreaDisplays.storedList = {};
+cwAreaDisplays.storedList = cwAreaDisplays.storedList or {};

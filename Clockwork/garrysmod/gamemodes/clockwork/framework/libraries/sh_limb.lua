@@ -138,16 +138,16 @@ if (SERVER) then
 		return 0;
 	end;
 else
-	Clockwork.limb.bodyTexture = Material("clockwork/limbs/body.png");
-	Clockwork.limb.stored = {};
+	Clockwork.limb.bodyTexture = Clockwork.kernel:GetMaterial("clockwork/limbs/body.png");
+	Clockwork.limb.stored = Clockwork.limb.stored or {};
 	Clockwork.limb.hitGroups = {
-		[HITGROUP_RIGHTARM] = Material("clockwork/limbs/rarm.png"),
-		[HITGROUP_RIGHTLEG] = Material("clockwork/limbs/rleg.png"),
-		[HITGROUP_LEFTARM] = Material("clockwork/limbs/larm.png"),
-		[HITGROUP_LEFTLEG] = Material("clockwork/limbs/lleg.png"),
-		[HITGROUP_STOMACH] = Material("clockwork/limbs/stomach.png"),
-		[HITGROUP_CHEST] = Material("clockwork/limbs/chest.png"),
-		[HITGROUP_HEAD] = Material("clockwork/limbs/head.png")
+		[HITGROUP_RIGHTARM] = Clockwork.kernel:GetMaterial("clockwork/limbs/rarm.png"),
+		[HITGROUP_RIGHTLEG] = Clockwork.kernel:GetMaterial("clockwork/limbs/rleg.png"),
+		[HITGROUP_LEFTARM] = Clockwork.kernel:GetMaterial("clockwork/limbs/larm.png"),
+		[HITGROUP_LEFTLEG] = Clockwork.kernel:GetMaterial("clockwork/limbs/lleg.png"),
+		[HITGROUP_STOMACH] = Clockwork.kernel:GetMaterial("clockwork/limbs/stomach.png"),
+		[HITGROUP_CHEST] = Clockwork.kernel:GetMaterial("clockwork/limbs/chest.png"),
+		[HITGROUP_HEAD] = Clockwork.kernel:GetMaterial("clockwork/limbs/head.png")
 	};
 	Clockwork.limb.names = {
 		[HITGROUP_RIGHTARM] = "Right Arm",

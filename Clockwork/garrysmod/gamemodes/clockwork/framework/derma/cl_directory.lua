@@ -24,7 +24,7 @@ function PANEL:Init()
 	self.htmlPanel = vgui.Create("HTML", self);
 	
 	Clockwork.directory.panel = self;
-	Clockwork.directory.panel.categoryHistory = {};
+	Clockwork.directory.panel.categoryHistory = Clockwork.directory.panel.categoryHistory or {};
 	
 	self:Rebuild();
 end;

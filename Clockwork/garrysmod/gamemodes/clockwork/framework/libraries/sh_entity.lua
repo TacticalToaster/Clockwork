@@ -614,6 +614,7 @@ if (SERVER) then
 		
 		if (bFreezeEntity) then
 			if (IsValid(entity:GetPhysicsObject())) then
+				entity:SetMoveType(MOVETYPE_NONE);
 				entity:GetPhysicsObject():EnableMotion(false);
 			end;
 		end;
@@ -1109,6 +1110,10 @@ if (SERVER) then
 	-- A function to create cash.
 	function Clockwork.entity:CreateCash(ownerObj, cash, position, angles)
 		if (Clockwork.config:Get("cash_enabled"):Get()) then
+			if (type(cash) != "number") then
+				return;
+			end;
+			
 			local entity = ents.Create("cw_cash");
 			
 			if (type(ownerObj) == "table") then

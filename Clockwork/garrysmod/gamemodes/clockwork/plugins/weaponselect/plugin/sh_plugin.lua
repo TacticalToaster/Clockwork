@@ -24,5 +24,5 @@ if (CLIENT) then
 	cwWeaponSelect.displayFade = 0;
 	cwWeaponSelect.displayAlpha = 0;
 	cwWeaponSelect.displayDelay = 0;
-	cwWeaponSelect.weaponPrintNames = {};
+	cwWeaponSelect.weaponPrintNames = cwWeaponSelect.weaponPrintNames or {};
 end;

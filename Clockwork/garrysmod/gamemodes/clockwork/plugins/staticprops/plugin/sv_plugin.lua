@@ -8,7 +8,7 @@
 
 -- A function to load the static props.
 function cwStaticProps:LoadStaticProps()
-	self.staticProps = Clockwork.kernel:RestoreSchemaData("plugins/props/"..game.GetMap());
+	self.staticProps = self.staticProps or Clockwork.kernel:RestoreSchemaData("plugins/props/"..game.GetMap());
 	
 	for k, v in pairs(self.staticProps) do
 		local entity = ents.Create("prop_physics");

@@ -137,7 +137,7 @@ function Clockwork.storage:Open(player, data)
 	end;
 	
 	data.inventory = data.inventory or {};
-	data.entity = data.entity == nil and player or data.entity;
+	data.entity = data.entity or player;
 	data.weight = data.weight or Clockwork.config:Get("default_inv_weight"):Get();
 	data.space = data.space or Clockwork.config:Get("default_inv_space"):Get();
 	data.cash = data.cash or 0;

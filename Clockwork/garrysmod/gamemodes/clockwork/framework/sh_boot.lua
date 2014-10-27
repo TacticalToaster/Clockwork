@@ -6,11 +6,6 @@
 	http://cloudsixteen.com/license/clockwork.html
 --]]
 
-if (Clockwork and Clockwork.config) then
-	ErrorNoHalt("[Clockwork] Clockwork does not currently support AutoRefresh but is being worked on.\n");
-	return;
-end;
-
 local AddCSLuaFile = AddCSLuaFile;
 local IsValid = IsValid;
 local pairs = pairs;
@@ -19,7 +14,18 @@ local string = string;
 local table = table;
 local game = game;
 
-Clockwork = Clockwork or GM;
+if (!Clockwork) then
+	Clockwork = GM;
+else
+	CurrentGM = Clockwork;
+	table.Merge(CurrentGM, GM);
+	Clockwork = nil;
+	
+	Clockwork = GM;
+	table.Merge(Clockwork, CurrentGM);
+	CurrentGM = nil;
+end;
+
 Clockwork.ClockworkFolder = Clockwork.ClockworkFolder or GM.Folder;
 Clockwork.SchemaFolder = Clockwork.SchemaFolder or GM.Folder;
 Clockwork.KernelVersion = "0.92";
@@ -94,82 +100,88 @@ Clockwork.kernel:IncludeDirectory("system/", true);
 Clockwork.kernel:IncludeDirectory("items/", true);
 Clockwork.kernel:IncludeDirectory("derma/", true);
 
---[[ The following code is loaded by CloudAuthX. --]]
-if (SERVER) then include("sv_cloudax.lua"); end;
+-- We do not want externals to be loaded again and again.
+if (!cwBootComplete) then
 
---[[ The following code is loaded over-the-Cloud. --]]
-if (SERVER and Clockwork.LoadPreSchemaExternals) then
-	Clockwork:LoadPreSchemaExternals();
-end;
+	--[[ The following code is loaded by CloudAuthX. --]]
+	if (SERVER) then include("sv_cloudax.lua"); end;
 
---[[ Load the schema and let any plugins know about it. --]]
-Clockwork.kernel:IncludeSchema();
-Clockwork.plugin:Call("ClockworkSchemaLoaded");
-
---[[ The following code is loaded over-the-Cloud. --]]
-if (SERVER and Clockwork.LoadPostSchemaExternals) then
-	Clockwork:LoadPostSchemaExternals();
-end;
-
-if (CLIENT) then
-	Clockwork.plugin:Call("ClockworkLoadShared", CW_SCRIPT_SHARED);
-end;
-
-Clockwork.kernel:IncludeDirectory("commands/", true);
-
-Clockwork.player:AddCharacterData("PhysDesc", NWTYPE_STRING, "");
-Clockwork.player:AddPlayerData("Language", NWTYPE_STRING, "English", true);
-
--- Called when the Clockwork shared variables are added.
-function Clockwork:ClockworkAddSharedVars(globalVars, playerVars)
-	for k, v in pairs(self.player.characterData) do
-		playerVars:Add(k, v.nwType, v.playerOnly);
+	--[[ The following code is loaded over-the-Cloud. --]]
+	if (SERVER and Clockwork.LoadPreSchemaExternals) then
+		Clockwork:LoadPreSchemaExternals();
 	end;
-	
-	for k, v in pairs(self.player.playerData) do
-		playerVars:Add(k, v.nwType, v.playerOnly);
+
+	--[[ Load the schema and let any plugins know about it. --]]
+	Clockwork.kernel:IncludeSchema();
+	Clockwork.plugin:Call("ClockworkSchemaLoaded");
+
+	--[[ The following code is loaded over-the-Cloud. --]]
+	if (SERVER and Clockwork.LoadPostSchemaExternals) then
+		Clockwork:LoadPostSchemaExternals();
 	end;
-	
-	playerVars:Number("InvWeight", true);
-	playerVars:Number("MaxHP", true);
-	playerVars:Number("MaxAP", true);
-	playerVars:Number("IsDrunk", true);
-	playerVars:Number("Wages", true);
-	playerVars:Number("Cash", true);
-	playerVars:Number("ActDuration");
-	playerVars:Number("ForceAnim");
-	playerVars:Number("IsRagdoll");
-	playerVars:Number("Faction");
-	playerVars:Number("Gender");
-	playerVars:Number("Key");
-	playerVars:Bool("TargetKnows", true);
-	playerVars:Bool("FallenOver", true);
-	playerVars:Bool("CharBanned", true);
-	playerVars:Bool("IsWepRaised");
-	playerVars:Bool("Initialized");
-	playerVars:Bool("IsJogMode");
-	playerVars:Bool("IsRunMode");
-	playerVars:String("Clothes", true);
-	playerVars:String("Model", true);
-	playerVars:String("ActName");
-	playerVars:String("Flags");
-	playerVars:String("Name");
-	playerVars:Entity("Ragdoll");
-	playerVars:Float("StartActTime");
-	globalVars:String("NoMySQL");
-	globalVars:String("Date");
-	globalVars:Number("Minute");
-	globalVars:Number("Hour");
-	globalVars:Number("Day");
+
+	if (CLIENT) then
+		Clockwork.plugin:Call("ClockworkLoadShared", CW_SCRIPT_SHARED);
+	end;
+
+	Clockwork.kernel:IncludeDirectory("commands/", true);
+
+	Clockwork.player:AddCharacterData("PhysDesc", NWTYPE_STRING, "");
+	Clockwork.player:AddPlayerData("Language", NWTYPE_STRING, "English", true);
+
+	-- Called when the Clockwork shared variables are added.
+	function Clockwork:ClockworkAddSharedVars(globalVars, playerVars)
+		for k, v in pairs(self.player.characterData) do
+			playerVars:Add(k, v.nwType, v.playerOnly);
+		end;
+		
+		for k, v in pairs(self.player.playerData) do
+			playerVars:Add(k, v.nwType, v.playerOnly);
+		end;
+		
+		playerVars:Number("InvWeight", true);
+		playerVars:Number("MaxHP", true);
+		playerVars:Number("MaxAP", true);
+		playerVars:Number("IsDrunk", true);
+		playerVars:Number("Wages", true);
+		playerVars:Number("Cash", true);
+		playerVars:Number("ActDuration");
+		playerVars:Number("ForceAnim");
+		playerVars:Number("IsRagdoll");
+		playerVars:Number("Faction");
+		playerVars:Number("Gender");
+		playerVars:Number("Key");
+		playerVars:Bool("TargetKnows", true);
+		playerVars:Bool("FallenOver", true);
+		playerVars:Bool("CharBanned", true);
+		playerVars:Bool("IsWepRaised");
+		playerVars:Bool("Initialized");
+		playerVars:Bool("IsJogMode");
+		playerVars:Bool("IsRunMode");
+		playerVars:String("Clothes", true);
+		playerVars:String("Model", true);
+		playerVars:String("ActName");
+		playerVars:String("Flags");
+		playerVars:String("Name");
+		playerVars:Entity("Ragdoll");
+		playerVars:Float("StartActTime");
+		globalVars:String("NoMySQL");
+		globalVars:String("Date");
+		globalVars:Number("Minute");
+		globalVars:Number("Hour");
+		globalVars:Number("Day");
+	end;
+
+	Clockwork.plugin:Call("ClockworkAddSharedVars",
+		Clockwork.kernel:GetSharedVars():Global(true),
+		Clockwork.kernel:GetSharedVars():Player(true)
+	);
+
+	Clockwork.plugin:IncludeEffects("Clockwork/framework");
+	Clockwork.plugin:IncludeWeapons("Clockwork/framework");
+	Clockwork.plugin:IncludeEntities("Clockwork/framework");
+
+	if (SERVER) then CloudAuthX.Initialize(); end;
+
+	cwBootComplete = true;
 end;
-
-Clockwork.plugin:Call("ClockworkAddSharedVars",
-	Clockwork.kernel:GetSharedVars():Global(true),
-	Clockwork.kernel:GetSharedVars():Player(true)
-);
-
-Clockwork.plugin:IncludeEffects("Clockwork/framework");
-Clockwork.plugin:IncludeWeapons("Clockwork/framework");
-Clockwork.plugin:IncludeEntities("Clockwork/framework");
-
-if (SERVER) then CloudAuthX.Initialize(); end;

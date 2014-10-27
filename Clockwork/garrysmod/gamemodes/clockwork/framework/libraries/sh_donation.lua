@@ -11,7 +11,7 @@ local table = table;
 local os = os;
 
 Clockwork.donation = Clockwork.kernel:NewLibrary("Donation");
-Clockwork.donation.stored = {};
+Clockwork.donation.stored = Clockwork.donation.stored or {};
 
 -- A function to register a new donation subscription.
 function Clockwork.donation:Register(uniqueID, friendlyName, description, imageName)

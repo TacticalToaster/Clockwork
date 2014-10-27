@@ -428,6 +428,13 @@ Clockwork.datastream:Hook("Notification", function(data)
 	end;
 end);
 
+--[[  DISABLED FOR NOW
+-- Called when a Derma skin should be forced.
+function Clockwork:ForceDermaSkin()
+	return "Clockwork"
+end;
+--]]
+
 -- Called when a weapon is picked up and added to the HUD.
 function Clockwork:HUDWeaponPickedUp(...) end;
 
@@ -494,16 +501,6 @@ function Clockwork:ClockworkDirectoryRebuilt(panel)
 			self.command:AddHelp(v);
 		end;
 	end;
-end;
-
--- Called when a Derma skin should be forced.
-function Clockwork:ForceDermaSkin()
-	--[[
-		Disable the custom Derma skin as it needs updating to GWEN.
-		return "Clockwork";
-	--]]
-	
-	return nil;
 end;
 
 -- Called when the local player is given an item.
@@ -697,7 +694,7 @@ function Clockwork:Initialize()
 	self.plugin:Call("ClockworkInitialized");
 	
 	self.theme:CreateFonts();
-		-- self.theme:CopySkin();
+		self.theme:CopySkin();
 	self.theme:Initialize();
 	
 	self.plugin:CheckMismatches();
@@ -1170,7 +1167,7 @@ function Clockwork:MenuItemsAdd(menuItems)
 	local directoryName = self.option:GetKey("name_directory");
 	local inventoryName = self.option:GetKey("name_inventory");
 	local businessName = self.option:GetKey("name_business");
-	
+		
 	menuItems:Add("Classes", "cwClasses", "Choose from a list of available classes.");
 	menuItems:Add("Settings", "cwSettings", "Configure the way Clockwork works for you.");
 	menuItems:Add("Donations", "cwDonations", "Check your donation subscriptions.");
@@ -1936,6 +1933,12 @@ function Clockwork:GetAdminESPInfo(info)
 					color = cwTeam.GetColor(v:Team()),
 					text = v:Name().." ("..v:Health().."/"..v:GetMaxHealth()..")"
 				};
+			else
+				info[#info + 1] = {
+					position = v:GetPos() + Vector(0, 0, 80),
+					color = cwTeam.GetColor(v:Team()),
+					text = v:Name().." ("..v:Health().."/"..v:GetMaxHealth()..")"
+				};
 			end;
 		end;
 	end;
@@ -1955,20 +1958,20 @@ function Clockwork:GetProgressBarInfo()
 	local action, percentage = self.player:GetAction(self.Client, true);
 	
 	if (!self.Client:Alive() and action == "spawn") then
-		return {text = "You will be respawned shortly.", percentage = percentage, flash = percentage < 10};
+		return {text = "You will be respawned shortly...", percentage = percentage, flash = percentage < 10};
 	end;
 	
 	if (!self.Client:IsRagdolled()) then
 		if (action == "lock") then
-			return {text = "The entity is being locked.", percentage = percentage, flash = percentage < 10};
+			return {text = "The entity is being locked...", percentage = percentage, flash = percentage < 10};
 		elseif (action == "unlock") then
-			return {text = "The entity is being unlocked.", percentage = percentage, flash = percentage < 10};
+			return {text = "The entity is being unlocked...", percentage = percentage, flash = percentage < 10};
 		end;
 	elseif (action == "unragdoll") then
 		if (self.Client:GetRagdollState() == RAGDOLL_FALLENOVER) then
-			return {text = "You are regaining stability.", percentage = percentage, flash = percentage < 10};
+			return {text = "You are regaining stability...", percentage = percentage, flash = percentage < 10};
 		else
-			return {text = "You are regaining conciousness.", percentage = percentage, flash = percentage < 10};
+			return {text = "You are regaining conciousness...", percentage = percentage, flash = percentage < 10};
 		end;
 	elseif (self.Client:GetRagdollState() == RAGDOLL_FALLENOVER) then
 		local fallenOver = self.Client:GetSharedVar("FallenOver");
@@ -2971,6 +2974,29 @@ end;
 
 -- Overriding Garry's "grab ear" animation.
 function Clockwork:GrabEarAnimation(player) end;
+
+-- Called when clockwork has been reloaded by AutoRefresh.
+function Clockwork:OnClockworkReloaded()
+	clientSideRefreshed = true;
+	
+	self.theme:CreateFonts();
+		self.theme:CopySkin();
+	self.theme:Initialize();
+
+	Clockwork.kernel:PrintColoredText(
+		Clockwork.kernel:GetLogTypeColor(LOGTYPE_MINOR), "Clockwork has Auto Refreshed clientside!"
+	);
+end;
+
+-- We remove directory tab from clients on AutoRefresh.
+-- Called when the menu's items should be destroyed.
+function Clockwork:MenuItemsDestroy(menuItems)
+	local directoryName = Clockwork.option:GetKey("name_directory");
+	
+	if (clientSideRefreshed) then
+		menuItems:Destroy(directoryName);
+	end;
+end;
 
 concommand.Add("cwLua", function(player, command, arguments)
 	if (player:IsSuperAdmin()) then

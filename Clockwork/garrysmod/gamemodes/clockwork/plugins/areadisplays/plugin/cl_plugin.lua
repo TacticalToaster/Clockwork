@@ -6,10 +6,14 @@
 	http://cloudsixteen.com/license/clockwork.html
 --]]
 
-cwAreaDisplays.activeDisplays = {};
+cwAreaDisplays.activeDisplays = cwAreaDisplays.activeDisplays or {};
 cwAreaDisplays.expiredList = Clockwork.kernel:RestoreSchemaData("plugins/displays/"..game.GetMap());
 
-Clockwork.setting:AddCheckBox("Framework", "Enable the area display.", "cwShowAreas", "Whether or not to show areas as you enter them.");
+if (!checkBoxAdded) then
+	Clockwork.setting:AddCheckBox("Framework", "Enable the area display.", "cwShowAreas", "Whether or not to show areas as you enter them.");
+	
+	checkBoxAdded = true;
+end;
 
 Clockwork.datastream:Hook("AreaDisplays", function(data)
 	for k, v in pairs(data) do

@@ -113,7 +113,7 @@ function CLASS_TABLE:AddOption(text, color)
 end;
 
 if (SERVER) then
-	Clockwork.selector.active = {};
+	Clockwork.selector.active = Clockwork.selector.active or {};
 	
 	-- A function to set the selector's player.
 	function CLASS_TABLE:SetPlayer(player)

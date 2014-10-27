@@ -14,7 +14,7 @@ local string = string;
 local os = os;
 
 Clockwork.bans = Clockwork.kernel:NewLibrary("Bans");
-Clockwork.bans.stored = {};
+Clockwork.bans.stored = Clockwork.bans.stored or {};
 
 --[[
 	A local function to handle ban deletion.

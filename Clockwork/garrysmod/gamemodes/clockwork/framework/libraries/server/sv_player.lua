@@ -25,8 +25,8 @@ local math = math;
 local util = util;
 
 Clockwork.player = Clockwork.kernel:NewLibrary("Player");
-Clockwork.player.property = {};
-Clockwork.player.stored = {};
+Clockwork.player.property = Clockwork.player.property or {};
+Clockwork.player.stored = Clockwork.player.stored or {};
 
 -- A function to run an inventory action for a player.
 function Clockwork.player:InventoryAction(player, itemTable, action)
@@ -67,11 +67,11 @@ function Clockwork.player:CreateCharacterFromData(player, data)
 		);
 	end;
 	
-	info.attributes = {};
-	info.faction = factionTable.name;
-	info.gender = data.gender;
-	info.model = data.model;
-	info.data = {};
+	info.attributes = info.attributes or {};
+	info.faction = info.faction or factionTable.name;
+	info.gender = info.gender or data.gender;
+	info.model = info.model or data.model;
+	info.data = info.data or {};
 	
 	local classes = false;
 	
@@ -2995,8 +2995,8 @@ function Clockwork.player:LoadCharacter(player, characterID, tMergeCreate, Callb
 		character.faction = FACTION_CITIZEN;
 		character.steamID = player:SteamID();
 		character.steamName = player:SteamName();
-		character.inventory = {};
-		character.attributes = {};
+		character.inventory = character.inventory or {};
+		character.attributes = character.attributes or {};
 		character.onNextLoad = "";
 		character.lastPlayed = unixTime;
 		character.timeCreated = unixTime;
@@ -3007,7 +3007,7 @@ function Clockwork.player:LoadCharacter(player, characterID, tMergeCreate, Callb
 			table.Merge(character, tMergeCreate);
 			
 			if (character and type(character) == "table") then
-				character.inventory = {};
+				character.inventory = character.inventory or {};
 				Clockwork.plugin:Call(
 					"GetPlayerDefaultInventory", player, character, character.inventory
 				);

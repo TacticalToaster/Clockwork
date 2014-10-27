@@ -17,8 +17,8 @@ local game = game;
 local math = math;
 
 Clockwork.class = Clockwork.kernel:NewLibrary("Class");
-Clockwork.class.stored = {};
-Clockwork.class.buffer = {};
+Clockwork.class.stored = Clockwork.class.stored or {};
+Clockwork.class.buffer = Clockwork.class.buffer or {};
 
 --[[ Set the __index meta function of the class. --]]
 local CLASS_TABLE = {__index = CLASS_TABLE};

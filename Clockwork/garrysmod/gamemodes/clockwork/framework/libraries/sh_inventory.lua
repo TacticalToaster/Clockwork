@@ -160,7 +160,7 @@ end;
 
 -- A function to remove an instance from a table.
 function Clockwork.inventory:RemoveInstance(inventory, itemTable)
-	if (!itemTable:IsInstance()) then
+	if (!itemTable or !itemTable:IsInstance()) then
 		debug.Trace();
 		return false;
 	end;
@@ -291,7 +291,7 @@ function Clockwork.inventory:CreateDuplicate(inventory)
 end;
 
 if (CLIENT) then
-	Clockwork.inventory.client = {};
+	Clockwork.inventory.client = Clockwork.inventory.client or {};
 	
 	-- A function to get whether the client has an item equipped.
 	function Clockwork.inventory:HasEquipped(itemTable)
@@ -382,10 +382,12 @@ if (CLIENT) then
 			local itemTable = Clockwork.item:CreateInstance(
 				v.index, v.itemID, v.data
 			);
-			
-			Clockwork.inventory:AddInstance(
-				Clockwork.inventory.client, itemTable
-			);
+
+			if (itemTable) then
+				Clockwork.inventory:AddInstance(
+					Clockwork.inventory.client, itemTable
+				);
+			end;
 		end;
 		
 		Clockwork.inventory:Rebuild();

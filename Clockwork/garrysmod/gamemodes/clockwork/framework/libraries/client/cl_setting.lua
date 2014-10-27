@@ -11,7 +11,7 @@ local pairs = pairs;
 local table = table;
 
 Clockwork.setting = Clockwork.kernel:NewLibrary("Setting");
-Clockwork.setting.stored = {};
+Clockwork.setting.stored = Clockwork.setting.stored or {};
 
 -- A function to add a number slider setting.
 function Clockwork.setting:AddNumberSlider(category, text, conVar, minimum, maximum, decimals, toolTip, Condition)
@@ -132,22 +132,27 @@ function Clockwork.setting:Remove(category, text, class, conVar)
 	end;
 end;
 
-Clockwork.setting:AddNumberSlider("Framework", "Headbob Amount:", "cwHeadbobScale", 0, 1, 1, "The amount to scale the headbob by.");
-Clockwork.setting:AddNumberSlider("Chat Box", "Chat Lines:", "cwMaxChatLines", 1, 10, 0, "The amount of chat lines shown at once.");
+-- We don't need them to be added everytime server refreshes.
+if (!addedSettingCheckboxes) then
+  Clockwork.setting:AddNumberSlider("Framework", "Headbob Amount:", "cwHeadbobScale", 0, 1, 1, "The amount to scale the headbob by.");
+  Clockwork.setting:AddNumberSlider("Chat Box", "Chat Lines:", "cwMaxChatLines", 1, 10, 0, "The amount of chat lines shown at once.");
+  
+  Clockwork.setting:AddCheckBox("Framework", "Enable the admin console log.", "cwShowLog", "Whether or not to show the admin console log.", function()
+  	return Clockwork.player:IsAdmin(Clockwork.Client);
+  end);
+  
+  Clockwork.setting:AddCheckBox("Framework", "Enable the twelve hour clock.", "cwTwelveHourClock", "Whether or not to show a twelve hour clock.");
+  Clockwork.setting:AddCheckBox("Framework", "Show bars at the top of the screen.", "cwTopBars", "Whether or not to show bars at the top of the screen.");
+  Clockwork.setting:AddCheckBox("Framework", "Enable the hints system.", "cwShowHints", "Whether or not to show you any hints.");
+  Clockwork.setting:AddCheckBox("Chat Box", "Show timestamps on messages.", "cwShowTimeStamps", "Whether or not to show you timestamps on messages.");
+  Clockwork.setting:AddCheckBox("Chat Box", "Show messages related to Clockwork.", "cwShowClockwork", "Whether or not to show you any Clockwork messages.");
+  Clockwork.setting:AddCheckBox("Chat Box", "Show messages from the server.", "cwShowServer", "Whether or not to show you any server messages.");
+  Clockwork.setting:AddCheckBox("Chat Box", "Show out-of-character messages.", "cwShowOOC", "Whether or not to show you any out-of-character messages.");
+  Clockwork.setting:AddCheckBox("Chat Box", "Show in-character messages.", "cwShowIC", "Whether or not to show you any in-character messages.");
+  
+  Clockwork.setting:AddCheckBox("Framework", "Enable the admin ESP.", "cwAdminESP", "Whether or not to show the admin ESP.", function()
+  	return Clockwork.player:IsAdmin(Clockwork.Client);
+  end);
 
-Clockwork.setting:AddCheckBox("Framework", "Enable the admin console log.", "cwShowLog", "Whether or not to show the admin console log.", function()
-	return Clockwork.player:IsAdmin(Clockwork.Client);
-end);
-
-Clockwork.setting:AddCheckBox("Framework", "Enable the twelve hour clock.", "cwTwelveHourClock", "Whether or not to show a twelve hour clock.");
-Clockwork.setting:AddCheckBox("Framework", "Show bars at the top of the screen.", "cwTopBars", "Whether or not to show bars at the top of the screen.");
-Clockwork.setting:AddCheckBox("Framework", "Enable the hints system.", "cwShowHints", "Whether or not to show you any hints.");
-Clockwork.setting:AddCheckBox("Chat Box", "Show timestamps on messages.", "cwShowTimeStamps", "Whether or not to show you timestamps on messages.");
-Clockwork.setting:AddCheckBox("Chat Box", "Show messages related to Clockwork.", "cwShowClockwork", "Whether or not to show you any Clockwork messages.");
-Clockwork.setting:AddCheckBox("Chat Box", "Show messages from the server.", "cwShowServer", "Whether or not to show you any server messages.");
-Clockwork.setting:AddCheckBox("Chat Box", "Show out-of-character messages.", "cwShowOOC", "Whether or not to show you any out-of-character messages.");
-Clockwork.setting:AddCheckBox("Chat Box", "Show in-character messages.", "cwShowIC", "Whether or not to show you any in-character messages.");
-
-Clockwork.setting:AddCheckBox("Framework", "Enable the admin ESP.", "cwAdminESP", "Whether or not to show the admin ESP.", function()
-	return Clockwork.player:IsAdmin(Clockwork.Client);
-end);
+  addedSettingCheckboxes = true;
+end;

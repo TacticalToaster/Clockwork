@@ -550,7 +550,7 @@ if (SERVER) then
 		end;
 	end);
 else
-	Clockwork.config.system = {};
+	Clockwork.config.system = Clockwork.config.system or {};
 	
 	Clockwork.datastream:Hook("Config", function(data)
 		for k, v in pairs(data) do

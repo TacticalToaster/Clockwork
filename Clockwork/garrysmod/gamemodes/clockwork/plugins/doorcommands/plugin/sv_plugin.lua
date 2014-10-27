@@ -10,7 +10,7 @@ Clockwork.config:Add("default_doors_hidden", true, nil, nil, nil, nil, true);
 
 -- A function to load the parent data.
 function cwDoorCmds:LoadParentData()
-	self.parentData = {};
+	self.parentData = self.parentData or {};
 	
 	local parentData = Clockwork.kernel:RestoreSchemaData("plugins/parents/"..game.GetMap());
 	local positions = {};

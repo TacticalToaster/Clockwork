@@ -11,7 +11,7 @@ local pairs = pairs;
 local string = string;
 
 Clockwork.generator = Clockwork.kernel:NewLibrary("Generator");
-Clockwork.generator.stored = {};
+Clockwork.generator.stored = Clockwork.generator.stored or {};
 
 -- A function to register a new generator.
 function Clockwork.generator:Register(name, power, health, maximum, cash, uniqueID, powerName, powerPlural)

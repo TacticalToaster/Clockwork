@@ -11,8 +11,8 @@ local pairs = pairs;
 local string = string;
 
 Clockwork.attribute = Clockwork.kernel:NewLibrary("Attribute");
-Clockwork.attribute.stored = {};
-Clockwork.attribute.buffer = {};
+Clockwork.attribute.stored = Clockwork.attribute.stored or {};
+Clockwork.attribute.buffer = Clockwork.attribute.buffer or {};
 
 --[[ Set the __index meta function of the class. --]]
 local CLASS_TABLE = {__index = CLASS_TABLE};

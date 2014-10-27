@@ -9,11 +9,13 @@
 -- Called when Clockwork has loaded all of the entities.
 function cwSalesmen:ClockworkInitPostEntity()
 	self:LoadSalesmen();
+	self:LoadActors();
 end;
 
 -- Called just after data should be saved.
 function cwSalesmen:PostSaveData()
 	self:SaveSalesmen();
+	self:SaveActors();
 end;
 
 -- Called when a player attempts to use a salesman.
@@ -29,7 +31,7 @@ function cwSalesmen:PlayerCanUseSalesman(player, entity)
 	end;
 	
 	if (numClasses > 0) then
-		if (!entity.cwClasses[cwTeam.GetName(player:Team())]) then
+		if (!entity.cwClasses[_team.GetName(player:Team())]) then
 			bDisallowed = true;
 		end;
 	end;
@@ -54,6 +56,16 @@ function cwSalesmen:PlayerUseSalesman(player, entity)
 		cash = entity.cwCash,
 		text = entity.cwTextTab,
 		buys = entity.cwBuyTab,
+		name = entity:GetNetworkedString("Name")
+	});
+end;
+
+-- Called when a player uses a salesman.
+function cwSalesmen:PlayerUseActor(player, entity)
+	Clockwork.datastream:Start(player, "Actormenu", {
+		entity = entity,
+		text = entity.cwTextTab,
+		sound = entity.cwSound,
 		name = entity:GetNetworkedString("Name")
 	});
 end;

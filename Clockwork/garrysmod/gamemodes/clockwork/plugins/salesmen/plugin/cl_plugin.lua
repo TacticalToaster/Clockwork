@@ -121,3 +121,45 @@ Clockwork.datastream:Hook("SalesmanEdit", function(data)
 		Clockwork.salesman.panel:MakePopup();
 	end);
 end);
+
+Clockwork.datastream:Hook("ActorAdd", function(data)
+	Derma_StringRequest("Name", "What do you want the actor's name to be?", "", function(text)
+		Clockwork.actor.name = text;
+		
+		gui.EnableScreenClicker(true);
+		
+		Clockwork.actor.physDesc = "";
+		Clockwork.actor.model = "models/humans/group01/male_0"..math.random(1, 9)..".mdl";
+		Clockwork.actor.text = {};
+		Clockwork.actor.name = Clockwork.actor.name;
+		Clockwork.actor.sound = "";
+		
+		Clockwork.actor.panel = vgui.Create("cwActor");
+		Clockwork.actor.panel:Rebuild();
+		Clockwork.actor.panel:MakePopup();
+	end);
+end);
+
+Clockwork.datastream:Hook("ActorEdit", function(data)
+	Derma_StringRequest("Name", "What do you want to change the actor's name to?", data.name, function(text)
+		Clockwork.actor.physDesc = data.physDesc;
+		Clockwork.actor.model = data.model;
+		Clockwork.actor.text = data.textTab;
+		Clockwork.actor.name = text;
+		Clockwork.actor.sound = data.sound;
+		
+		gui.EnableScreenClicker(true);
+		
+		local scrW = ScrW();
+		local scrH = ScrH();
+		
+		Clockwork.actor.panel = vgui.Create("cwActor");
+		Clockwork.actor.panel:SetSize(scrW * 0.5, scrH * 0.75);
+		Clockwork.actor.panel:SetPos(
+			(scrW / 2) - (Clockwork.actor.panel:GetWide() / 2),
+			(scrH / 2) - (Clockwork.actor.panel:GetTall() / 2)
+		);
+		Clockwork.actor.panel:Rebuild();
+		Clockwork.actor.panel:MakePopup();
+	end);
+end);

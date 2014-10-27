@@ -319,7 +319,7 @@ function Clockwork.kernel:Serialize(tableToSerialize)
 	local bSuccess, value = pcall(von.serialize, tableToSerialize);
   
 	if (!bSuccess) then
-		print(value);
+		ErrorNoHalt(value.."\n");
 		return "";  	
 	end;
   
@@ -331,7 +331,7 @@ function Clockwork.kernel:Deserialize(stringToDeserialize)
 	local bSuccess, value = pcall(von.deserialize, stringToDeserialize);
   
 	if (!bSuccess) then
-		print(value);
+		ErrorNoHalt(value.."\n");
 		return {};  	
 	end;
   
@@ -672,6 +672,13 @@ function Clockwork:DoAnimationEvent(player, event, data)
 	return nil;
 end;
 
+-- Called when gamemode has been reloaded by AutoRefresh.
+function Clockwork:OnReloaded()
+	timer.Simple(0.5, function()
+		hook.Call("OnClockworkReloaded", nil);
+	end);
+end;
+
 if (SERVER) then
 	local ServerLog = ServerLog;
 	local cvars = cvars;
@@ -842,6 +849,7 @@ if (SERVER) then
 		for k, v in pairs(exploded) do
 			if (k < #exploded) then
 				currentPath = currentPath..v.."/";
+				
 				Clockwork.file:MakeDirectory(currentPath);
 			end;
 		end;
@@ -1403,7 +1411,7 @@ else
 	Clockwork.RecognisedNames = Clockwork.RecognisedNames or {};
 	Clockwork.NetworkProxies = Clockwork.NetworkProxies or {};
 	Clockwork.AccessoryData = Clockwork.AccessoryData or {};
-	Clockwork.InfoMenuOpen = false;
+	Clockwork.InfoMenuOpen = Clockwork.InfoMenuOpen or false;
 	Clockwork.ColorModify = Clockwork.ColorModify or {};
 	Clockwork.ClothesData = Clockwork.ClothesData or {};
 	Clockwork.Cinematics = Clockwork.Cinematics or {};
@@ -2088,6 +2096,7 @@ else
 		local newBarInfo = {
 			progressWidth = progressWidth,
 			drawBackground = true,
+			drawForeground = true,
 			drawProgress = true,
 			cornerSize = 2,
 			maximum = maximum,
@@ -2784,7 +2793,7 @@ else
 				end;
 				
 				Clockwork.kernel:OverrideMainFont(sCustomFont or v.font);
-					Clockwork.kernel:DrawSimpleText(v.text, x, y, Color(v.colour.r, v.colour.g, v.colour.b, alpha));
+					Clockwork.kernel:DrawSimpleText(v.text, x, y, Color(v.colour.r or 255, v.colour.g or 255, v.colour.b or 255, alpha));
 				Clockwork.kernel:OverrideMainFont(false);
 			end;
 		end;
@@ -3592,10 +3601,20 @@ end;
 
 -- A function to add a file to the content download.
 function Clockwork.kernel:AddFile(fileName)
-	if (cwFile.Exists(fileName, "GAME")) then
+	local fileBlacklist = {
+		"thumbs.db", ".ds_store"
+	};
+
+	for i = 1, #fileBlacklist do
+		if (string.find(string.lower(fileName), fileBlacklist[i])) then
+			return;
+		end;
+	end;
+
+	if (file.Exists(fileName, "GAME")) then
 		resource.AddFile(fileName);
 	else
-		-- print(Format("[Clockwork] File does not exist: %s.", fileName));
+		print(Format("[Clockwork] File does not exist: %s.", fileName));
 	end;
 end;
 
@@ -3637,7 +3656,7 @@ end;
 -- A function to include plugins in a directory.
 function Clockwork.kernel:IncludePlugins(directory, bFromBase)
 	if (bFromBase) then
-		directory = "Clockwork/"..directory;
+		directory = "clockwork/"..directory;
 	end;
 	
 	if (string.sub(directory, -1) != "/") then
