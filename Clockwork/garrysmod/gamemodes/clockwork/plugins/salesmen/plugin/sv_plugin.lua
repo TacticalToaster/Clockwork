@@ -193,7 +193,7 @@ Clockwork.datastream:Hook("SalesmanAdd", function(player, data)
 		salesman:SetupSalesman(data.name, data.physDesc, player.cwSalesmanAnim, data.showChatBubble);
 		
 		Clockwork.entity:MakeSafe(salesman, true, true);
-		cwSalesmen.actors[#cwSalesmen.salesmen + 1] = salesman;
+		cwSalesmen.salesmen[#cwSalesmen.salesmen + 1] = salesman;
 	end;
 	
 	player.cwSalesmanAnim = nil;
@@ -236,13 +236,22 @@ end;
 function cwSalesmen:GetTableFromEntity(entity)
 	return {
 		name = entity:GetNetworkedString("Name"),
+		cash = entity.cwCash,
+		stock = entity.cwStock,
 		model = entity:GetModel(),
 		angles = entity:GetAngles(),
+		buyRate = entity.cwBuyRate,
+		factions = entity.cwFactions,
+		buyTab = entity.cwBuyTab,
+		sellTab = entity.cwSellTab,
 		textTab = entity.cwTextTab,
+		classes = entity.cwClasses,
 		position = entity:GetPos(),
 		physDesc = entity:GetNetworkedString("PhysDesc"),
 		animation = entity.cwAnimation,
-		sound = entity.cwSound
+		priceScale = entity.cwPriceScale,
+		buyInShipments = entity.cwBuyInShipments,
+		showChatBubble = IsValid(entity:GetChatBubble())
 	};
 end;
 
@@ -257,105 +266,4 @@ function cwSalesmen:SaveSalesmen()
 	end;
 	
 	Clockwork.kernel:SaveSchemaData("plugins/salesmen/"..game.GetMap(), salesmen);
-end;
-
---[[actors]]--
-Clockwork.datastream:Hook("Actormenu", function(player, data)
-	if (data.entity:GetClass() == "cw_actor") then
-		if (player:GetPos():Distance(data.entity:GetPos()) < 196) then
-			sound.Play(data.sound, player:GetPos(), 60, 100, 0.6);
-			
-			data.entity:TalkToPlayer(player, data.entity.cwTextTab or "Sometimes, I dream about cheese!");
-		end;
-	end;
-end);
-
-Clockwork.datastream:Hook("ActorAdd", function(player, data)
-	if (player.cwActorSetup) then
-		local varTypes = {
-			["physDesc"] = "string",
-			["model"] = "string",
-			["text"] = "table",
-			["name"] = "string",
-			["sound"] = "string"
-		};
-		
-		for k, v in pairs(varTypes) do
-			if (data[k] == nil or type(data[k]) != v) then
-				return;
-			end;
-		end;
-		
-		local actor = ents.Create("cw_actor");
-		local angles = player:GetAngles();
-		
-		angles.pitch = 0; angles.roll = 0;
-		angles.yaw = angles.yaw + 180;
-	
-		actor:SetPos(player.cwActorPos or player.cwActorHitPos);
-		actor:SetAngles(player.cwActorAng or angles);
-		actor:SetModel(data.model);
-		actor:Spawn();
-		
-		actor.cwTextTab = data.text;
-		actor.cwSound = data.sound;
-		actor:SetupActor(data.name, data.physDesc, player.cwActorAnim);
-		
-		Clockwork.entity:MakeSafe(actor, true, true);
-		cwActors.actors[#cwActors.actors + 1] = actor;
-	end;
-	
-	player.cwActorAnim = nil;
-	player.cwActorSetup = nil;
-	player.cwActorPos = nil;
-	player.cwActorAng = nil;
-	player.cwActorHitPos = nil;
-end);
-
--- A function to load the actors.
-function cwActors:LoadActors()
-	self.actors = Clockwork.kernel:RestoreSchemaData("plugins/actors/"..game.GetMap());
-	
-	for k, v in pairs(self.actors) do
-		local actor = ents.Create("cw_actor");
-		
-		actor:SetPos(v.position);
-		actor:SetModel(v.model);
-		actor:SetAngles(v.angles);
-		actor:Spawn();
-		
-		actor.cwTextTab = v.textTab;
-		actor.cwSound = v.sound;
-		actor:SetupActor(v.name, v.physDesc, v.animation);
-		Clockwork.entity:MakeSafe(actor, true, true);
-		
-		self.actors[k] = actor;
-	end;
-end;
-
--- A function to get an actor table from an entity.
-function cwActors:GetTableFromEntity(entity)
-	return {
-		name = entity:GetNetworkedString("Name"),
-		model = entity:GetModel(),
-		angles = entity:GetAngles(),
-		textTab = entity.cwTextTab,
-		position = entity:GetPos(),
-		physDesc = entity:GetNetworkedString("PhysDesc"),
-		animation = entity.cwAnimation,
-		sound = entity.cwSound
-	};
-end;
-
--- A function to save the actors.
-function cwActors:SaveActors()
-	local actors = {};
-	
-	for k, v in pairs(self.actors) do
-		if (IsValid(v)) then
-			actors[#actors + 1] = self:GetTableFromEntity(v);
-		end;
-	end;
-	
-	Clockwork.kernel:SaveSchemaData("plugins/actors/"..game.GetMap(), actors);
 end;
