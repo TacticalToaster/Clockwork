@@ -5,18 +5,20 @@ The following changes have been made for each official Clockwork build.
 0.92
 -------
 
+* Clockwork now supports AutoRefresh. Please report any bugs in the issues section.
 * Added Clockwork.player:AddCharacterData and Clockwork.player:AddPlayerData for adding character and player data that is automatically networked to either all players, or the local player only. This comes with a client-side version of player:GetData(key, default) and player:GetCharacterData(key, default).
 * Added Linux binaries. This is a big deal. You can now run Clockwork on your Linux server, please report bugs to the issue tracker as it isn't guaranteed to be flawless right now, but at least it will run.
 * Added support for intro sound configuration and reduced line count.
   * *Contributed by ametrocavich.*
-* Now using PON + made datastreams faster.
+* Made datastreams faster.
   * *Contributed by TheGarry.*
+* Fixed Datastream config setting bugs and plugin loading/unloading.
 * Added a config option to disable black intro bars.
 * Added two config options to use different types of server rates, that should prevent few nasty item dupe glitches and also kill lags.
 * Added console versions of common admin commands (such as "setgroup", "demote" etc). Use "cwc COMMAND ARGUMENTS" in console.
 * Fixed bug where weapons didn't raise correctly.
 * Changed Clockwork intro music to old OpenAura one.
-* Clockwork will try to use SQLLite if the default SQL file is not touched.
+* Clockwork will try to use SQLite if the default SQL file is not touched.
 * Clockwork will try to use MySQLOO if it is installed and loaded.
 
 0.91
