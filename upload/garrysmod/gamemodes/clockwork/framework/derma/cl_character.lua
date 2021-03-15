@@ -2033,7 +2033,7 @@ function PANEL:Init()
 				return;
 			end;
 			
-			if (traitTable.points < self:GetPointsLeft()) then
+			if (traitTable.points =< self:GetPointsLeft()) then
 				traitButton:SetColor(informationColor);
 				
 				table.insert(self.selectedTraits, traitTable);
